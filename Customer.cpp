@@ -7,6 +7,8 @@
 
 #include "Customer.h"
 
+const unsigned int SEED = 7;
+
 Customer::Customer() {
-	int transactionTimeRequired = rrand_r(7) % 330 + 30;
+	int transactionTimeRequired = rand() % 330 + 30;
 }

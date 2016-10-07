@@ -13,14 +13,13 @@ Teller::Teller(){
 
 }
 
-int Teller::Create()
+void Teller::start()
 	{
 		 pthread_t thread;
-		 pthread_create(&thread, NULL, &start, NULL);
+		 pthread_create(&thread, NULL, &serve_customers, NULL);
 		 std::cout << thread << std::endl;
-		 return 0;
 	}
 
-void* Teller::start(void*){
-	std::cout << "thread ran" << std::endl;
+void* Teller::serve_customers(void*){
+
 }

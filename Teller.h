@@ -10,10 +10,10 @@
 
 class Teller{
 public:
-	int Create();
+	void start();
 	Teller();
 private:
-	static void* start(void*);
+	static void* serve_customers(void*);
 };
 
 #endif /* THREAD_H_ */
