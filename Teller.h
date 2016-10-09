@@ -8,12 +8,24 @@
 #ifndef THREAD_H_
 #define THREAD_H_
 
+#include<pthread.h>
+#include<iostream>
+
+#include "Bank.h"
+
+class Bank;
 class Teller{
-public:
-	void start();
-	Teller();
 private:
-	static void* serve_customers(void*);
+
+	pthread_cond_t isAvailable;
+	Bank* bank;
+
+	void serve_customers();
+
+public:
+	static void* start(void* v);
+	Teller(Bank* b);
+	static void CreateTellerThread(Teller* t);
 };
 
 #endif /* THREAD_H_ */

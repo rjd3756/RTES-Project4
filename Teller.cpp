@@ -5,21 +5,25 @@
  *      Author: rjd3756
  */
 
-#include<pthread.h>
-#include<iostream>
 #include<Teller.h>
 
-Teller::Teller(){
-
+Teller::Teller(Bank* b){
+	bank = b;
 }
 
-void Teller::start()
-	{
-		 pthread_t thread;
-		 pthread_create(&thread, NULL, &serve_customers, NULL);
-		 std::cout << thread << std::endl;
-	}
+void* Teller::start(void* v)
+{
+	Teller* t = (Teller*)v;
+	std::cout << "Teller Started" << std::endl;
+	t->Teller::serve_customers();
+}
 
-void* Teller::serve_customers(void*){
+void Teller::serve_customers() {
+	std::cout << "Teller Execute" << std::endl;
+	bank->TransactionComplete(0, 0);
+}
 
+void Teller::CreateTellerThread(Teller* t){
+	pthread_t thread;
+	pthread_create(&thread, NULL, &Teller::start, (void*)t);
 }
