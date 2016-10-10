@@ -5,13 +5,16 @@
  *      Author: rjd3756
  */
 #include <stdlib.h>
+#include "Constants.h"
 
 #ifndef CUSTOMER_H_
 #define CUSTOMER_H_
 
 class Customer {
 public:
-	Customer();
+	Customer(int idnum);
+	int id;
+	int transactionTime;
 };
 
 #endif /* CUSTOMER_H_ */

@@ -26,7 +26,9 @@ public:
 	void customer_enter(Customer c);
 	Customer get_next_customer_in_line();
 	static void CreateBankThread(Bank* b);
-	void TransactionComplete(double timeSpentOnTransaction, double timeTellerSpentWaiting);
+	void TransactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerSpentWaiting);
+	bool bank_empty();
+	bool isBankOpen();
 
 private:
 	int customersServiced;
@@ -43,6 +45,7 @@ private:
 	Teller* tellers[NUMBER_OF_TELLERS];
 	pthread_cond_t* availableTellers[NUMBER_OF_TELLERS];
 	pthread_mutex_t lock;
+	pthread_cond_t customerPresent;
 
 	void execute();
 	void open();

@@ -7,8 +7,8 @@
 
 #include "Customer.h"
 
-const unsigned int SEED = 7;
 
-Customer::Customer() {
-	int transactionTimeRequired = rand() % 330 + 30;
+Customer::Customer(int idnum) {
+	transactionTime = TIME_CONVERSION_MIN_TO_MICRO * (rand() % 330 + 30);
+	id = idnum;
 }

@@ -4,8 +4,7 @@
 #include "Customer.h"
 #include <pthread.h>
 #include "Bank.h"
-
-const double TIME_CONVERSION = 100000/60; //simulation minutes to microseconds
+#include "Constants.h"
 
 
 int main(int argc, char *argv[]) {
@@ -13,12 +12,15 @@ int main(int argc, char *argv[]) {
 	Bank* bank = new Bank();
 	Bank::CreateBankThread(bank);
 
-	while(1) {
-		Customer customer = Customer::Customer();
+	int i = 0;
+	while(i < 10) {
+		Customer customer = Customer::Customer(i);
 		int customer_enter_wait = rand() % 180 + 60;
-		usleep(customer_enter_wait * TIME_CONVERSION);
+		usleep(customer_enter_wait * TIME_CONVERSION_MIN_TO_MICRO);
 
 		bank->customer_enter(customer);
+		i++;
 	}
+	for (int i = 0; i < 10; i++);
 	return EXIT_SUCCESS;
 }

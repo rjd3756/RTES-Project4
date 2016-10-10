@@ -6,6 +6,8 @@
  */
 #include <queue>
 #include <pthread.h>
+#include <cstdlib>
+#include <iostream>
 #include "Customer.h"
 
 

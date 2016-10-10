@@ -7,20 +7,41 @@
 
 #include<Teller.h>
 
-Teller::Teller(Bank* b){
+Teller::Teller(Bank* b, int idnum, pthread_cond_t custPresent, pthread_mutex_t mutex){
 	bank = b;
+	id = idnum;
+	customerPresent = custPresent;
+	lock = mutex;
 }
 
 void* Teller::start(void* v)
 {
 	Teller* t = (Teller*)v;
-	std::cout << "Teller Started" << std::endl;
+	std::cout << "Teller Thread Started" << std::endl;
 	t->Teller::serve_customers();
 }
 
 void Teller::serve_customers() {
-	std::cout << "Teller Execute" << std::endl;
-	bank->TransactionComplete(0, 0);
+	while(1) {
+		//std::cout << "Creating a new timer teller" << id << std::endl;
+		Timer* timer = new Timer();
+		//std::cout << "start timer teller" << id << std::endl;
+		timer->start();
+		while (bank->bank_empty()) {
+			if (!bank->isBankOpen()) {
+				return;
+			}
+			//std::cout << "Teller waiting for a customer... " << std::endl;
+			pthread_cond_wait(&customerPresent, &lock);
+		}
+		Customer customer = bank->get_next_customer_in_line();
+		//std::cout << "stop timer teller" << id << std::endl;
+		double timeWaited = timer->stop();
+		//std::cout << "Teller waited " << timeWaited << " for a customer." << std::endl;
+		//std::cout << "Teller" << id << " takes person from line: " << customer.id << std::endl;
+		usleep(customer.transactionTime);
+		bank->TransactionComplete(id, customer.id, customer.transactionTime, 0);
+	}
 }
 
 void Teller::CreateTellerThread(Teller* t){

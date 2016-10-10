@@ -11,22 +11,21 @@
 Bank::Bank(){
 	std::cout << "New bank" << std::endl;
 	customer_line = ThreadSafeQueue::ThreadSafeQueue();
+	pthread_cond_init(&customerPresent, NULL);
 }
 
 void* Bank::start(void* v){
 	Bank* b = (Bank*)v;
-	std::cout << "Bank Started" << std::endl;
+	std::cout << "Bank Thread Started" << std::endl;
 	b->execute();
 }
 
 void Bank::execute() {
 	std::cout << "Bank Execute" << std::endl;
+
 	//hire tellers
 	for(int i = 0; i < NUMBER_OF_TELLERS; ++i){
-		pthread_cond_t isAvailable;
-		availableTellers[i] = &isAvailable;
-		pthread_cond_init(&isAvailable, NULL);
-		tellers[i] = new Teller(this);
+		tellers[i] = new Teller(this, i, customerPresent, lock);
 	}
 
 	//(9 am) begin servicing customers today
@@ -38,10 +37,25 @@ void Bank::open(){
 	for(int i = 0; i < NUMBER_OF_TELLERS; ++i){
 		Teller::CreateTellerThread(tellers[i]);
 	}
+
+
+}
+
+bool Bank::isBankOpen() {
+	// TODO: Return true/false based on time of day
+	return true;
 }
 
 void Bank::customer_enter(Customer c) {
-	customer_line.Enqueue(c);
+	if (isBankOpen()) {
+		customer_line.Enqueue(c);
+		std::cout << "Customer entered " << c.id << std::endl;
+		pthread_cond_signal(&customerPresent);
+	}
+}
+
+bool Bank::bank_empty() {
+	return customer_line.line_empty();
 }
 
 Customer Bank::get_next_customer_in_line(){
@@ -49,7 +63,9 @@ Customer Bank::get_next_customer_in_line(){
 	return customer_line.Dequeue();
 }
 
-void Bank::TransactionComplete(double timeSpentOnTransaction, double timeTellerSpentWaiting){
+void Bank::TransactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerSpentWaiting){
+	std::cout << "Teller" << tellerId << " completed transaction with customer " << customerId << ". Time spent: " <<
+			timeSpentOnTransaction << std::endl << std::flush;
 	pthread_mutex_lock(&lock);
 
 	++customersServiced;
