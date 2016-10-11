@@ -40,6 +40,8 @@ private:
 
 	int hoursToRun;
 
+	Timer* timer;
+
 	pthread_t thread_id;
 	ThreadSafeQueue customer_line;
 	Teller* tellers[NUMBER_OF_TELLERS];

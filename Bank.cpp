@@ -39,11 +39,13 @@ void Bank::open(){
 		Teller::CreateTellerThread(tellers[i]);
 	}
 
+	timer = new Timer();
+	timer->start();
 
 }
 
 bool Bank::isBankOpen() {
-	// TODO: Return true/false based on time of day
+	double currentTime = timer->timePassed();
 	return true;
 }
 
