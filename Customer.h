@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include "Constants.h"
+#include "Timer.h"
 
 #ifndef CUSTOMER_H_
 #define CUSTOMER_H_
@@ -13,8 +14,13 @@
 class Customer {
 public:
 	Customer(int idnum);
+	void EnteredLine();
+	double ExitedLine();
+	Timer* timer;
 	int id;
 	int transactionTime;
+	double timeEntered;
+	double timeSpentInQueue;
 };
 
 #endif /* CUSTOMER_H_ */

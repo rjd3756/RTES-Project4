@@ -17,7 +17,7 @@ class Timer {
 
 public:
 	void start();
-	double stop();
+	double timePassed();
 
 };
 

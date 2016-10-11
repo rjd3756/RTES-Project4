@@ -36,11 +36,11 @@ void Teller::serve_customers() {
 		}
 		Customer customer = bank->get_next_customer_in_line();
 		//std::cout << "stop timer teller" << id << std::endl;
-		double timeWaited = timer->stop();
+		double timeWaited = timer->timePassed();
 		//std::cout << "Teller waited " << timeWaited << " for a customer." << std::endl;
 		//std::cout << "Teller" << id << " takes person from line: " << customer.id << std::endl;
 		usleep(customer.transactionTime);
-		bank->TransactionComplete(id, customer.id, customer.transactionTime, 0);
+		bank->TransactionComplete(id, customer.id, (customer.transactionTime / SIMULATION_TIME_CONVERSION_MIN_TO_MICRO), timeWaited);
 	}
 }
 

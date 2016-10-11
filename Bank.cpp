@@ -8,7 +8,8 @@
 #include "Bank.h"
 
 
-Bank::Bank(){
+Bank::Bank(int hoursOpen){
+	hoursToRun = hoursOpen;
 	std::cout << "New bank" << std::endl;
 	customer_line = ThreadSafeQueue::ThreadSafeQueue();
 	pthread_cond_init(&customerPresent, NULL);
@@ -48,6 +49,7 @@ bool Bank::isBankOpen() {
 
 void Bank::customer_enter(Customer c) {
 	if (isBankOpen()) {
+		c.EnteredLine();
 		customer_line.Enqueue(c);
 		std::cout << "Customer entered " << c.id << std::endl;
 		pthread_cond_signal(&customerPresent);
@@ -59,13 +61,15 @@ bool Bank::bank_empty() {
 }
 
 Customer Bank::get_next_customer_in_line(){
-	//TODO Add time spent in queue
-	return customer_line.Dequeue();
+	Customer c = customer_line.Dequeue();
+	c.ExitedLine();
+	return c;
 }
 
-void Bank::TransactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerSpentWaiting){
+void Bank::TransactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerSpentWaiting, double timeCustomerSpentWaiting){
 	std::cout << "Teller" << tellerId << " completed transaction with customer " << customerId << ". Time spent: " <<
 			timeSpentOnTransaction << std::endl << std::flush;
+	std::cout << "Teller" << tellerId << " waited " << timeTellerSpentWaiting << " for customer" << std::endl << std::flush;
 	pthread_mutex_lock(&lock);
 
 	++customersServiced;
@@ -78,6 +82,11 @@ void Bank::TransactionComplete(int tellerId, int customerId, double timeSpentOnT
 	timeTellerSpentWaiting += timeTellerSpentWaiting;
 	if(timeTellerSpentWaiting > maxTimeTellerWaits){
 		maxTimeTellerWaits = timeTellerSpentWaiting;
+	}
+
+	timeSpentInQueue += timeCustomerSpentWaiting;
+	if(timeCustomerSpentWaiting > timeSpentInQueue){
+		maxQueueWaitTime = timeCustomerSpentWaiting;
 	}
 
 	pthread_mutex_unlock(&lock);

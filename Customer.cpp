@@ -9,6 +9,15 @@
 
 
 Customer::Customer(int idnum) {
-	transactionTime = TIME_CONVERSION_MIN_TO_MICRO * (rand() % 330 + 30);
+	transactionTime = SIMULATION_TIME_CONVERSION_MIN_TO_MICRO * (rand() % 330 + 30);
 	id = idnum;
+	timer = new timer();
+}
+
+void Customer::EnteredLine(){
+	timer->start();
+}
+
+double Customer::ExitedLine(){
+	timeSpentInQueue = timer->timePassed();
 }

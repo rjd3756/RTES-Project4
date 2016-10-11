@@ -17,10 +17,8 @@
 class Teller;
 class Bank{
 public:
-	Bank();
+	Bank(int hoursOpen);
 	virtual ~Bank();
-	static const int OPEN_HOUR = 9; //9 am
-	static const int CLOSE_HOUR = 16; //4 pm
 	static const int NUMBER_OF_TELLERS = 3;
 	static void* start(void* v);
 	void customer_enter(Customer c);
@@ -39,6 +37,8 @@ private:
 	int maxTimeTellerWaits;
 	int maxTransactionTime;
 	int maxQueueDepth;
+
+	int hoursToRun;
 
 	pthread_t thread_id;
 	ThreadSafeQueue customer_line;
