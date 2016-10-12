@@ -18,7 +18,7 @@ public:
 	double ExitedLine();
 	Timer* timer;
 	int id;
-	int transactionTime;
+	double transactionTime;
 	double timeEntered;
 	double timeSpentInQueue;
 };

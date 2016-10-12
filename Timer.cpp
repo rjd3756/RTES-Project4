@@ -7,8 +7,10 @@
 
 #include "Timer.h"
 
-struct timespec timestart;
-
+Timer::Timer(){
+	struct timespec start;
+	timestart = start;
+}
 
 void Timer::start() {
 	clock_gettime(CLOCK_REALTIME, &timestart);
@@ -31,7 +33,6 @@ double Timer::timePassed() {
 	return timeDiffNanoSec * TIME_CONVERSION_NANO_TO_SEC + timeDiffSeconds;
 }
 
-void ~Timer(){
-
+Timer::~Timer(){
 }
 

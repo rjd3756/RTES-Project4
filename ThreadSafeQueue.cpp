@@ -42,3 +42,7 @@ Customer ThreadSafeQueue::Dequeue(){
 		return NULL;
 	}
 }
+
+int ThreadSafeQueue::getCustomerCount(){
+	return customer_count;
+}

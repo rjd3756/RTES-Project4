@@ -29,6 +29,7 @@ void Teller::serve_customers() {
 		timer->start();
 		while (bank->bank_empty()) {
 			if (!bank->isBankOpen()) {
+				std::cout << "Teller dies" << std::endl;
 				return;
 			}
 			//std::cout << "Teller waiting for a customer... " << std::endl;
@@ -40,7 +41,8 @@ void Teller::serve_customers() {
 		//std::cout << "Teller waited " << timeWaited << " for a customer." << std::endl;
 		//std::cout << "Teller" << id << " takes person from line: " << customer.id << std::endl;
 		usleep(customer.transactionTime);
-		bank->TransactionComplete(id, customer.id, (customer.transactionTime / SIMULATION_TIME_CONVERSION_MIN_TO_MICRO), timeWaited);
+		std::cout << "Transaction time: " << customer.transactionTime/SIMULATION_TIME_CONVERSION_MIN_TO_MICRO << std::endl;
+		bank->TransactionComplete(id, customer.id, customer.transactionTime/SIMULATION_TIME_CONVERSION_MIN_TO_MICRO, timeWaited * SECONDS_TO_SIM_MINUTES, customer.timeSpentInQueue);
 	}
 }
 

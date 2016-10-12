@@ -24,21 +24,26 @@ public:
 	void customer_enter(Customer c);
 	Customer get_next_customer_in_line();
 	static void CreateBankThread(Bank* b);
-	void TransactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerSpentWaiting);
+	void TransactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerWaited, double timeCustomerSpentWaiting);
 	bool bank_empty();
 	bool isBankOpen();
+	pthread_cond_t readyCondition;
+	pthread_cond_t allCustomersServicedCondition;
+	bool ready;
+	bool allCustomersServiced;
+	void displayMetrics();
 
 private:
 	int customersServiced;
-	int timeSpentInQueue;
-	int timeSpentWithTeller;
-	int timeTellersSpentWaiting;
-	int maxQueueWaitTime;
-	int maxTimeTellerWaits;
-	int maxTransactionTime;
+	double timeSpentInQueue;
+	double timeSpentWithTeller;
+	double timeTellersSpentWaiting;
+	double maxQueueWaitTime;
+	double maxTimeTellerWaits;
+	double maxTransactionTime;
 	int maxQueueDepth;
 
-	int hoursToRun;
+	int minutesToRun;
 
 	Timer* timer;
 

@@ -25,6 +25,7 @@ public:
 	void Enqueue(Customer c);
 	Customer Dequeue();
 	bool line_empty();
+	int getCustomerCount();
 };
 
 #endif /* THREADSAFEQUEUE_H_ */
