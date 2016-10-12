@@ -1,13 +1,14 @@
 /*
  * ThreadSafeQueue.h
  *
+ *	A queue that can be accessed by multiple threads safely
+ *
  *  Created on: Oct 5, 2016
- *      Author: rjd3756
+ *      Author: Joey Bovio, RJ DiNardi
  */
 #include <queue>
 #include <pthread.h>
-#include <cstdlib>
-#include <iostream>
+
 #include "Customer.h"
 
 
@@ -22,9 +23,9 @@ private:
 
 public:
 	ThreadSafeQueue();
-	void Enqueue(Customer c);
-	Customer Dequeue();
-	bool line_empty();
+	void enqueue(Customer c);
+	Customer dequeue();
+	bool lineEmpty();
 	int getCustomerCount();
 };
 

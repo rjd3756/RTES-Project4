@@ -2,15 +2,13 @@
  * Time.h
  *
  *  Created on: Oct 10, 2016
- *      Author: rjd3756
+ *      Author: Joey Bovio, RJ DiNardi
  */
 
 #ifndef TIME_H_
 #define TIME_H_
 
 #include <time.h>
-#include <cstdlib>
-#include <iostream>
 #include "Constants.h"
 
 class Timer {
@@ -23,7 +21,6 @@ public:
 
 private:
 	timespec timestart;
-
 };
 
 #endif /* TIME_H_ */

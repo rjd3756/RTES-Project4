@@ -2,11 +2,10 @@
  * Bank.cpp
  *
  *  Created on: Oct 5, 2016
- *      Author: rjd3756
+ *      Author: Joey Bovio, RJ DiNardi
  */
 
 #include "Bank.h"
-
 
 Bank::Bank(int hoursOpen){
 	minutesToRun = hoursOpen * SIM_HOURS_TO_SIM_MINUTES;
@@ -43,7 +42,7 @@ void Bank::open(){
 	timer->start();
 
 	for(int i = 0; i < NUMBER_OF_TELLERS; ++i){
-		Teller::CreateTellerThread(tellers[i]);
+		Teller::createTellerThread(tellers[i]);
 	}
 	ready = true;
 	pthread_cond_signal(&readyCondition);
@@ -56,11 +55,11 @@ bool Bank::isBankOpen() {
 	return currentTime * SECONDS_TO_SIM_MINUTES < minutesToRun;
 }
 
-void Bank::customer_enter(Customer c) {
+void Bank::customerEnter(Customer c) {
 	if (isBankOpen()) {
 		allCustomersServiced = false;
-		c.EnteredLine();
-		customer_line.Enqueue(c);
+		c.enteredLine();
+		customer_line.enqueue(c);
 		int lineLength = customer_line.getCustomerCount();
 		if(lineLength > maxQueueDepth){
 			maxQueueDepth = lineLength;
@@ -70,9 +69,9 @@ void Bank::customer_enter(Customer c) {
 	}
 }
 
-bool Bank::bank_empty() {
+bool Bank::bankEmpty() {
 	//std::cout << "Customer Count " << customer_line.getCustomerCount() << std::endl;
-	bool isEmpty = customer_line.line_empty();
+	bool isEmpty = customer_line.lineEmpty();
 	if(isEmpty){
 		pthread_cond_signal(&allCustomersServicedCondition);
 		allCustomersServiced = true;
@@ -81,13 +80,13 @@ bool Bank::bank_empty() {
 	return isEmpty;
 }
 
-Customer Bank::get_next_customer_in_line(){
-	Customer c = customer_line.Dequeue();
-	c.ExitedLine();
+Customer Bank::getNextCustomerInLine(){
+	Customer c = customer_line.dequeue();
+	c.exitedLine();
 	return c;
 }
 
-void Bank::TransactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerWaited, double timeCustomerSpentWaiting){
+void Bank::transactionComplete(int tellerId, int customerId, double timeSpentOnTransaction, double timeTellerWaited, double timeCustomerSpentWaiting){
 	std::cout << "Teller" << tellerId << " completed transaction with customer " << customerId << ". Time spent: " <<
 			timeSpentOnTransaction << std::endl << std::flush;
 	pthread_mutex_lock(&lock);
@@ -113,19 +112,19 @@ void Bank::TransactionComplete(int tellerId, int customerId, double timeSpentOnT
 }
 
 void Bank::displayMetrics(){
+	//waits until all the customers remaining in line have been taken care of
 	pthread_mutex_t lock;
 	while(!allCustomersServiced){
 		pthread_cond_wait(&allCustomersServicedCondition, &lock);
 	}
 
 	std::cout << "Total Customers Serviced:  " << customersServiced << std::endl;
-	std::cout << "Total time spent in queue:  " << timeSpentInQueue << std::endl;
-	std::cout << "Average Time Customer Spends in Queue:  " << ((double)timeSpentInQueue)/customersServiced << std::endl;
-	std::cout << "Average Time Customer Spends with Teller:  " << ((double)timeSpentWithTeller)/customersServiced << std::endl;
-	std::cout << "Average Time Tellers Wait for Customers:  " << ((double)timeTellersSpentWaiting)/customersServiced << std::endl;
-	std::cout << "Max Customer Wait Time in Queue:  " << maxQueueWaitTime << std::endl;
-	std::cout << "Max Time Tellers Wait for Customers:  " << maxTimeTellerWaits << std::endl;
-	std::cout << "Max Transaction Time for Tellers:  " << maxTransactionTime << std::endl;
+	std::cout << "Average Time Customer Spends in Queue:  " << (((double)timeSpentInQueue)/customersServiced) * SECONDS_TO_SIM_MINUTES << std::endl;
+	std::cout << "Average Time Customer Spends with Teller:  " << (((double)timeSpentWithTeller)/customersServiced) * SECONDS_TO_SIM_MINUTES << std::endl;
+	std::cout << "Average Time Tellers Wait for Customers:  " << (((double)timeTellersSpentWaiting)/customersServiced) * SECONDS_TO_SIM_MINUTES << std::endl;
+	std::cout << "Max Customer Wait Time in Queue:  " << maxQueueWaitTime * SECONDS_TO_SIM_MINUTES << std::endl;
+	std::cout << "Max Time Tellers Wait for Customers:  " << maxTimeTellerWaits * SECONDS_TO_SIM_MINUTES << std::endl;
+	std::cout << "Max Transaction Time for Tellers:  " << maxTransactionTime * SECONDS_TO_SIM_MINUTES << std::endl;
 	std::cout << "Max Depth of Queue:  " << maxQueueDepth << std::endl;
 }
 
@@ -133,7 +132,7 @@ Bank::~Bank() {
 	pthread_cancel(thread_id);
 }
 
-void Bank::CreateBankThread(Bank* b){
+void Bank::createBankThread(Bank* b){
 	pthread_t thread;
 	pthread_create(&thread, NULL, &Bank::start, (void*)b);
 }

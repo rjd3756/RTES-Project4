@@ -2,7 +2,7 @@
  * Thread.cpp
  *
  *  Created on: Oct 3, 2016
- *      Author: rjd3756
+ *      Author: Joey Bovio, RJ DiNardi
  */
 
 #include<Teller.h>
@@ -18,35 +18,34 @@ void* Teller::start(void* v)
 {
 	Teller* t = (Teller*)v;
 	std::cout << "Teller Thread Started" << std::endl;
-	t->Teller::serve_customers();
+	t->Teller::serveCustomers();
 }
 
-void Teller::serve_customers() {
+void Teller::serveCustomers() {
 	while(1) {
-		//std::cout << "Creating a new timer teller" << id << std::endl;
 		Timer* timer = new Timer();
-		//std::cout << "start timer teller" << id << std::endl;
 		timer->start();
-		while (bank->bank_empty()) {
+
+		//look to see if the line is empty
+		while (bank->bankEmpty()) {
+			//look to see if the bank is closed
 			if (!bank->isBankOpen()) {
-				std::cout << "Teller dies" << std::endl;
+				std::cout << "Teller goes home" << std::endl;
 				return;
 			}
-			//std::cout << "Teller waiting for a customer... " << std::endl;
 			pthread_cond_wait(&customerPresent, &lock);
 		}
-		Customer customer = bank->get_next_customer_in_line();
-		//std::cout << "stop timer teller" << id << std::endl;
+
+		//get the next customer in line
+		Customer customer = bank->getNextCustomerInLine();
 		double timeWaited = timer->timePassed();
-		//std::cout << "Teller waited " << timeWaited << " for a customer." << std::endl;
-		//std::cout << "Teller" << id << " takes person from line: " << customer.id << std::endl;
 		usleep(customer.transactionTime);
-		std::cout << "Transaction time: " << customer.transactionTime/SIMULATION_TIME_CONVERSION_MIN_TO_MICRO << std::endl;
-		bank->TransactionComplete(id, customer.id, customer.transactionTime/SIMULATION_TIME_CONVERSION_MIN_TO_MICRO, timeWaited * SECONDS_TO_SIM_MINUTES, customer.timeSpentInQueue);
+
+		bank->transactionComplete(id, customer.id, customer.transactionTime * MICROSECONDS_TO_SECONDS, timeWaited, customer.timeSpentInQueue);
 	}
 }
 
-void Teller::CreateTellerThread(Teller* t){
+void Teller::createTellerThread(Teller* t){
 	pthread_t thread;
 	pthread_create(&thread, NULL, &Teller::start, (void*)t);
 }

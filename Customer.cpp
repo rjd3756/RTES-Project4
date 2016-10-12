@@ -2,23 +2,23 @@
  * Customer.cpp
  *
  *  Created on: Oct 5, 2016
- *      Author: rjd3756
+ *      Author: Joey Bovio, RJ DiNardi
  */
 
 #include "Customer.h"
 
 
 Customer::Customer(int idnum) {
-	transactionTime = SIMULATION_TIME_CONVERSION_MIN_TO_MICRO * (rand() % 330 + 30);
+	transactionTime = SIM_MINUTES_TO_MICROSECONDS * (rand() % 330 + 30);
 	id = idnum;
 	timer = new Timer();
 }
 
-void Customer::EnteredLine(){
+void Customer::enteredLine(){
 	timer->start();
 }
 
-double Customer::ExitedLine(){
+double Customer::exitedLine(){
 	timeSpentInQueue = timer->timePassed();
 	return timeSpentInQueue;
 }
